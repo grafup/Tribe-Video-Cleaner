@@ -85,7 +85,9 @@ export function VideoPreview({ src, className }: VideoPreviewProps) {
       for (const range of removeRanges) {
         if (t >= range.start && t < range.end) {
           video.currentTime = range.end;
-          setTimeout(scheduleNextSkip, 50);
+          // play() ensures video resumes if the browser briefly pauses during seek;
+          // the resulting 'play' event will re-trigger scheduleNextSkip
+          video.play().catch(() => {});
           return;
         }
       }
@@ -106,7 +108,7 @@ export function VideoPreview({ src, className }: VideoPreviewProps) {
         skipTimeout = setTimeout(() => {
           if (!video.paused) {
             video.currentTime = captured.end;
-            setTimeout(scheduleNextSkip, 50);
+            video.play().catch(() => {});
           }
         }, Math.max(0, msUntil - 30));
       }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import { useEditorStore } from "@/store/editor";
 import { WordChip } from "./WordChip";
 import { ContextMenu } from "./ContextMenu";
@@ -88,6 +88,22 @@ export function TranscriptEditor() {
 
   const transcript = project?.transcript ?? [];
 
+  // Track which segment is currently being spoken — only re-renders when active word changes
+  const activeSegmentId = useEditorStore((state) => {
+    if (!state.project) return null;
+    const t = state.currentTime;
+    return state.project.transcript.find((s) => t >= s.start && t <= s.end)?.id ?? null;
+  });
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll active word into view
+  useEffect(() => {
+    if (!activeSegmentId || !scrollRef.current) return;
+    const el = scrollRef.current.querySelector(`[data-segment-id="${activeSegmentId}"]`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [activeSegmentId]);
+
   const sentences = useMemo(
     () => (viewMode === "sentence" ? groupIntoSentences(transcript) : null),
     [transcript, viewMode]
@@ -172,7 +188,7 @@ export function TranscriptEditor() {
       </div>
 
       {/* Transcript content */}
-      <div className="flex-1 overflow-y-auto rounded-lg bg-gray-100 dark:bg-gray-800/30 p-4 text-sm leading-loose">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto rounded-lg bg-gray-100 dark:bg-gray-800/30 p-4 text-sm leading-loose">
         {viewMode === "word" ? (
           <div className="flex flex-wrap gap-x-1 gap-y-2 group">
             {transcript.map((seg) => {
@@ -188,7 +204,7 @@ export function TranscriptEditor() {
                       allWords={transcript}
                     />
                   )}
-                  <WordChip segment={seg} />
+                  <WordChip segment={seg} isActive={seg.id === activeSegmentId} />
                 </span>
               );
             })}
@@ -229,7 +245,7 @@ export function TranscriptEditor() {
                   </div>
                   <div className="flex flex-wrap gap-x-1 gap-y-1 group">
                     {sentence.map((seg) => (
-                      <WordChip key={seg.id} segment={seg} />
+                      <WordChip key={seg.id} segment={seg} isActive={seg.id === activeSegmentId} />
                     ))}
                   </div>
                 </div>

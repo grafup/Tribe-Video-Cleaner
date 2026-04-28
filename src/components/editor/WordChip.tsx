@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, memo } from "react";
 import { Check, X } from "lucide-react";
 import { useEditorStore } from "@/store/editor";
 import { getSegmentColor, formatTime } from "@/lib/utils";
@@ -10,9 +10,10 @@ import type { WordSegment } from "@/types";
 
 interface WordChipProps {
   segment: WordSegment;
+  isActive?: boolean;
 }
 
-export function WordChip({ segment }: WordChipProps) {
+function WordChipInner({ segment, isActive = false }: WordChipProps) {
   const { selectSegment, openContextMenu, selection, setSegmentStatus } =
     useEditorStore();
   const isSelected = selection.selectedSegmentIds.includes(segment.id);
@@ -61,6 +62,7 @@ export function WordChip({ segment }: WordChipProps) {
   if (isSilence) {
     return (
       <button
+        data-segment-id={segment.id}
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenu}
@@ -70,7 +72,8 @@ export function WordChip({ segment }: WordChipProps) {
           colors.bg,
           colors.text,
           colors.border,
-          isSelected && "ring-2 ring-indigo-400"
+          isSelected && "ring-2 ring-indigo-400",
+          isActive && "ring-2 ring-indigo-500 brightness-110"
         )}
       >
         <span className="opacity-60">⏸</span>
@@ -86,6 +89,7 @@ export function WordChip({ segment }: WordChipProps) {
   return (
     <span className="relative inline-flex items-center">
       <button
+        data-segment-id={segment.id}
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenu}
@@ -98,7 +102,8 @@ export function WordChip({ segment }: WordChipProps) {
           colors.text,
           segment.status === "remove" && "line-through opacity-60",
           isSelected && "ring-2 ring-indigo-400",
-          segment.isBestTake && "ring-2 ring-green-500"
+          segment.isBestTake && "ring-2 ring-green-500",
+          isActive && !isSelected && "ring-2 ring-indigo-500 bg-indigo-100 dark:bg-indigo-900/40"
         )}
       >
         {segment.text}
@@ -127,3 +132,5 @@ export function WordChip({ segment }: WordChipProps) {
     </span>
   );
 }
+
+export const WordChip = memo(WordChipInner);
