@@ -22,6 +22,8 @@ Built by [Automation Tribe](https://automation-tribe.com) · [Join the Community
 
 ![Tribe Video Cleaner interface](public/interface-tribe-video-cleaner.png)
 
+![Tribe Video Cleaner settings](public/Settings.png)
+
 ---
 
 ## Before you start
