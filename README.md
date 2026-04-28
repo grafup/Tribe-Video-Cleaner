@@ -20,6 +20,8 @@ Built by [Automation Tribe](https://automation-tribe.com) · [Join the Community
 - **Light and dark theme** — toggle in the top nav bar
 - **Settings saved locally** in your browser — no account needed
 
+![Tribe Video Cleaner interface](public/interface-tribe-video-cleaner.png)
+
 ---
 
 ## What you need
