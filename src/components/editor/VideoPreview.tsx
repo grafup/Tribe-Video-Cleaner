@@ -58,23 +58,83 @@ export function VideoPreview({ src, className }: VideoPreviewProps) {
     };
   }, [setCurrentTime, setDuration, setIsPlaying]);
 
-  // Skip over removed segments during playback
+  // Skip removed segments during playback using precise setTimeout scheduling.
+  // timeupdate (~4 Hz) is too coarse — it lets 100–200 ms of audio play before
+  // detecting the range boundary. Instead we schedule a timeout to fire right
+  // as the playhead reaches each removed range.
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || removeRanges.length === 0) return;
+    if (!video) return;
 
-    const handleSkip = () => {
-      const t = video.currentTime;
-      for (const range of removeRanges) {
-        if (t >= range.start && t < range.end) {
-          video.currentTime = range.end;
-          return;
-        }
+    let skipTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const clearSkip = () => {
+      if (skipTimeout !== null) {
+        clearTimeout(skipTimeout);
+        skipTimeout = null;
       }
     };
 
-    video.addEventListener("timeupdate", handleSkip);
-    return () => video.removeEventListener("timeupdate", handleSkip);
+    const scheduleNextSkip = () => {
+      clearSkip();
+      if (video.paused || removeRanges.length === 0) return;
+
+      const t = video.currentTime;
+
+      // Already inside a removed range → jump out immediately
+      for (const range of removeRanges) {
+        if (t >= range.start && t < range.end) {
+          video.currentTime = range.end;
+          setTimeout(scheduleNextSkip, 50);
+          return;
+        }
+      }
+
+      // Find the nearest upcoming removed range
+      let nearest: { start: number; end: number } | null = null;
+      for (const range of removeRanges) {
+        if (range.start > t && (!nearest || range.start < nearest.start)) {
+          nearest = range;
+        }
+      }
+
+      if (nearest) {
+        const rate = video.playbackRate || 1;
+        const msUntil = ((nearest.start - t) / rate) * 1000;
+        const captured = nearest;
+        // Fire 30 ms early to compensate for JS event-loop latency
+        skipTimeout = setTimeout(() => {
+          if (!video.paused) {
+            video.currentTime = captured.end;
+            setTimeout(scheduleNextSkip, 50);
+          }
+        }, Math.max(0, msUntil - 30));
+      }
+    };
+
+    const onPlay = () => scheduleNextSkip();
+    const onPause = () => clearSkip();
+    const onSeeked = () => { if (!video.paused) scheduleNextSkip(); };
+    const onRateChange = () => { clearSkip(); if (!video.paused) scheduleNextSkip(); };
+    const onEnded = () => clearSkip();
+
+    video.addEventListener("play", onPlay);
+    video.addEventListener("pause", onPause);
+    video.addEventListener("seeked", onSeeked);
+    video.addEventListener("ratechange", onRateChange);
+    video.addEventListener("ended", onEnded);
+
+    // If already playing when removeRanges change, reschedule immediately
+    if (!video.paused) scheduleNextSkip();
+
+    return () => {
+      clearSkip();
+      video.removeEventListener("play", onPlay);
+      video.removeEventListener("pause", onPause);
+      video.removeEventListener("seeked", onSeeked);
+      video.removeEventListener("ratechange", onRateChange);
+      video.removeEventListener("ended", onEnded);
+    };
   }, [removeRanges]);
 
   const togglePlay = useCallback(() => {

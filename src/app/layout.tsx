@@ -38,9 +38,12 @@ export default function RootLayout({
                 href="/"
                 className="flex items-center gap-2.5 text-lg font-bold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-sm font-black text-white">
-                  ✂
-                </span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/Logo-Tribe-Video-Cleaner-300.png"
+                  alt="Tribe Video Cleaner"
+                  className="h-8 w-auto"
+                />
                 Tribe Video Cleaner
               </Link>
 
