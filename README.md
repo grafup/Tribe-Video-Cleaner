@@ -24,25 +24,55 @@ Built by [Automation Tribe](https://automation-tribe.com) · [Join the Community
 
 ---
 
-## What you need
+## Before you start
 
-| Requirement | Version |
-|---|---|
-| **Node.js** | 18 or newer (20+ recommended) |
-| **npm** | included with Node.js |
-| **FFmpeg** | bundled automatically — no manual install |
+### Step 1 — Install Node.js
 
-### API keys
+Node.js is the only thing you need to install manually. Everything else (including FFmpeg) is installed automatically by `npm install`.
 
-At least one transcription key is required to use the app. Analysis is optional.
+👉 Download Node.js: **[nodejs.org](https://nodejs.org)** — choose the **LTS** version (the green button).
 
-| Service | Used for | Get key |
+To check if you already have it, open a terminal and run:
+
+```bash
+node --version
+```
+
+You need version **18 or newer**. If you see something like `v20.x.x` you're good to go.
+
+> **Windows users:** during the Node.js installer, make sure to check the box that says **"Add to PATH"** so you can run `node` and `npm` from any terminal window.
+
+---
+
+### Step 2 — Install Git
+
+Git is needed to clone (download) the project to your computer.
+
+👉 Download Git: **[git-scm.com](https://git-scm.com)**
+
+To check if you already have it:
+
+```bash
+git --version
+```
+
+> **Mac users:** if you have Xcode Command Line Tools installed, Git is already there.
+
+---
+
+### Step 3 — Get at least one API key
+
+You need at least one transcription key to use the app. Analysis is optional.
+
+| Service | Used for | Where to get it |
 |---|---|---|
-| ElevenLabs | Transcription (best word-level accuracy) | [elevenlabs.io](https://elevenlabs.io) |
-| OpenAI | Whisper transcription + GPT analysis | [platform.openai.com](https://platform.openai.com) |
-| Anthropic | Claude analysis | [console.anthropic.com](https://console.anthropic.com) |
+| **ElevenLabs** | Transcription — best word-level accuracy | [elevenlabs.io](https://elevenlabs.io) |
+| **OpenAI** | Whisper transcription + GPT analysis | [platform.openai.com](https://platform.openai.com) |
+| **Anthropic** | Claude analysis | [console.anthropic.com](https://console.anthropic.com) |
 
-You can enter keys in the **Settings page** inside the app. They stay in your browser only and are never sent to any external server beyond the AI providers themselves.
+You can enter keys directly in the **Settings page** inside the app — no config file needed. They are stored only in your browser and never shared.
+
+> **FFmpeg** is bundled inside the project automatically — you do **not** need to install it separately.
 
 ---
 
@@ -50,26 +80,33 @@ You can enter keys in the **Settings page** inside the app. They stay in your br
 
 ### 1 — Clone the repository
 
+Open a terminal, navigate to the folder where you want to save the project, then run:
+
 ```bash
 git clone https://github.com/grafup/Tribe-Video-Cleaner.git
 cd Tribe-Video-Cleaner
 ```
 
-### 2 — Install dependencies
+### 2 — Install all dependencies
 
 ```bash
 npm install
 ```
 
-### 3 — Set up environment variables (optional)
+This installs everything — Next.js, all UI libraries, and FFmpeg. It may take a minute or two the first time.
 
-Copy the example file and fill in your API keys:
+### 3 — Add your API keys (two ways)
+
+**Option A — inside the app (easiest):**
+Start the app and go to the **Settings** page. Paste your keys there. Done.
+
+**Option B — via environment file:**
 
 ```bash
 cp .env.local.example .env.local
 ```
 
-Open `.env.local` and add your keys:
+Open `.env.local` in any text editor and fill in your keys:
 
 ```env
 ELEVENLABS_API_KEY=your_key_here
@@ -77,7 +114,7 @@ OPENAI_API_KEY=your_key_here
 ANTHROPIC_API_KEY=your_key_here
 ```
 
-> **Tip:** You can skip this step entirely and enter your keys in the Settings page inside the app instead. Environment variables take priority when both are set.
+> Environment variables take priority over keys entered in the Settings page.
 
 ### 4 — Start the app
 
