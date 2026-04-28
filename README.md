@@ -154,20 +154,59 @@ Cursor has built-in AI assistance — you can open any file and ask it to explai
 
 [Claude Code](https://claude.ai/code) is an AI agent that can read, write, and run your entire project from the terminal.
 
-```bash
-# Install globally
-npm install -g @anthropic-ai/claude-code
+**Step 1 — Install Claude Code globally:**
 
-# Launch inside the project folder
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+**Step 2 — Clone and set up the project:**
+
+```bash
+git clone https://github.com/grafup/Tribe-Video-Cleaner.git
 cd Tribe-Video-Cleaner
+npm install
+```
+
+**Step 3 — Launch Claude Code inside the project folder:**
+
+```bash
 claude
 ```
 
-Then describe in plain English what you want to change — Claude Code will find the right files and make the edits.
+**Step 4 — Start the app:**
+
+```bash
+npm run dev
+```
+
+Open **[http://localhost:4000](http://localhost:4000)** in your browser.
+
+Then describe in plain English what you want to change — Claude Code will find the right files and make the edits for you.
+
+---
 
 ### OpenAI Codex / ChatGPT
 
-Open [ChatGPT](https://chatgpt.com) with code interpreter or use [GitHub Copilot](https://github.com/features/copilot) in your editor. The project is standard Next.js + TypeScript, so any AI assistant can read and modify it.
+**Step 1 — Clone and set up the project:**
+
+```bash
+git clone https://github.com/grafup/Tribe-Video-Cleaner.git
+cd Tribe-Video-Cleaner
+npm install
+```
+
+**Step 2 — Start the app:**
+
+```bash
+npm run dev
+```
+
+Open **[http://localhost:4000](http://localhost:4000)** in your browser.
+
+**Step 3 — Use ChatGPT or Codex to modify the project:**
+
+Open [ChatGPT](https://chatgpt.com) or [GitHub Copilot](https://github.com/features/copilot) in your editor. Copy and paste any file from the project and ask it to explain or modify the code. The project is standard Next.js + TypeScript — any AI assistant can navigate it easily.
 
 ---
 
